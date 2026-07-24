@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Take me to a random Site - Kibzaim Mejia</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css?family=Montserrat:200,300,400,600");
+
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            background: #000000;
+        }
+
+        .title {
+            z-index: 10;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            font-family: "Montserrat";
+            text-align: center;
+            width: 100%;
+        }
+
+        .title h3 a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .title h1 {
+            position: relative;
+            color: #EEEEEE;
+            font-weight: 600;
+            font-size: 60px;
+            padding: 0;
+            margin: 0;
+            line-height: 1;
+            text-shadow: 0 0 30px #000155;
+        }
+
+        .title h3 {
+            font-weight: 200;
+            font-size: 20px;
+            padding: 0;
+            margin: 0;
+            line-height: 1;
+            color: #EEEEEE;
+            letter-spacing: 2px;
+            text-shadow: 0 0 30px #000155;
+        }
+
+        .btn-liquid {
+            display: inline-block;
+            position: relative;
+            width: 240px;
+            height: 60px;
+            border-radius: 27px;
+            color: #fff;
+            font: 700 14px/60px "Montserrat", sans-serif;
+            text-align: center;
+            text-decoration: none;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            box-shadow: 0 0 15px rgba(67, 203, 255, 0.3);
+        }
+
+        .btn-liquid:hover {
+            transform: scale(1.02);
+        }
+
+        .btn-liquid:active {
+            transform: scale(0.98);
+        }
+
+        .btn-liquid .inner {
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn-liquid canvas {
+            position: absolute;
+            top: -80px;
+            /* más espacio arriba */
+            right: -80px;
+            /* más espacio derecha */
+            bottom: -80px;
+            /* más espacio abajo */
+            left: -80px;
+            /* más espacio izquierda */
+            z-index: 1;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="title">
+        <h3><a href="../" style="color:white">Regresar</a></h3><br>
+        <h3>Llévame a un lugar</h3>
+        <h1>Random</h1>
+        <br>
+        <a href="#" id="randomLinkBtn" class="btn-liquid" target="_blank">
+            <span class="inner" id="btnText">Let's GO!</span>
+        </a><br>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script>
+        // ------------------------------------------------------------
+        // PARTÍCULAS (original, funciona)
+        // ------------------------------------------------------------
+        (function () {
+            var _createClass = function () {
+                function defineProperties(target, props) {
+                    for (var i = 0; i < props.length; i++) {
+                        var descriptor = props[i];
+                        descriptor.enumerable = descriptor.enumerable || false;
+                        descriptor.configurable = true;
+                        if ("value" in descriptor) descriptor.writable = true;
+                        Object.defineProperty(target, descriptor.key, descriptor);
+                    }
+                }
+                return function (Constructor, protoProps, staticProps) {
+                    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+                    if (staticProps) defineProperties(Constructor, staticProps);
+                    return Constructor;
+                };
+            }();
+
+            function _classCallCheck(instance, Constructor) {
+                if (!(instance instanceof Constructor)) {
+                    throw new TypeError("Cannot call a class as a function");
+                }
+            }
+
+            var max_particles = 1000;
+            var tela = document.createElement('canvas');
+            tela.width = $(window).width();
+            tela.height = $(window).height();
+            $("body").append(tela);
+            var canvas = tela.getContext('2d');
+
+            var Particle = function () {
+                function Particle(canvas, progress) {
+                    _classCallCheck(this, Particle);
+                    var random = Math.random();
+                    this.progress = 0;
+                    this.canvas = canvas;
+                    this.x = $(window).width() / 2 + (Math.random() * 200 - Math.random() * 200);
+                    this.y = $(window).height() / 2 + (Math.random() * 200 - Math.random() * 200);
+                    this.w = $(window).width();
+                    this.h = $(window).height();
+                    this.radius = random > .1 ? Math.random() * 0.8 : Math.random() * 1.8;
+                    this.radius = random > .9 ? Math.random() * 2 : this.radius;
+                    this.color = random > .1 ? "#43CBFF" : "#E406D6";
+                    this.color = random > .9 ? "#FFFFFF" : this.color;
+                    this.variantx1 = Math.random() * 100;
+                    this.variantx2 = Math.random() * 100;
+                    this.varianty1 = Math.random() * 100;
+                    this.varianty2 = Math.random() * 100;
+                }
+                _createClass(Particle, [{
+                    key: 'render',
+                    value: function render() {
+                        this.canvas.beginPath();
+                        this.canvas.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+                        this.canvas.fillStyle = this.color;
+                        this.canvas.fill();
+                    }
+                }, {
+                    key: 'move',
+                    value: function move() {
+                        this.x += Math.sin(this.progress / this.variantx1) * Math.cos(this.progress / this.variantx2);
+                        this.y += Math.sin(this.progress / this.varianty1) * Math.cos(this.progress / this.varianty2);
+                        if (this.x < 0 || this.x > this.w - this.radius) return false;
+                        if (this.y < 0 || this.y > this.h - this.radius) return false;
+                        this.render();
+                        this.progress++;
+                        return true;
+                    }
+                }]);
+                return Particle;
+            }();
+
+            var particles = [];
+            var init_num = (function populate(num) {
+                for (var i = 0; i < num; i++) {
+                    setTimeout(function () {
+                        particles.push(new Particle(canvas, i));
+                    }, i * 20);
+                }
+                return particles.length;
+            })(max_particles);
+
+            function clear() {
+                canvas.globalAlpha = 0.02;
+                canvas.fillStyle = '#000155';
+                canvas.fillRect(0, 0, tela.width, tela.height);
+                canvas.globalAlpha = 1;
+            }
+
+            function update() {
+                particles = particles.filter(function (p) { return p.move(); });
+                if (particles.length < init_num) populate(1);
+                clear();
+                requestAnimationFrame(update);
+            }
+            update();
+
+            $(window).on('resize', function () {
+                tela.width = $(window).width();
+                tela.height = $(window).height();
+                particles.forEach(function (p) {
+                    p.w = tela.width;
+                    p.h = tela.height;
+                });
+            });
+        })();
+
+        // ------------------------------------------------------------
+        // BOTÓN LÍQUIDO CON ESPACIO AMPLIADO (sin clipping)
+        // ------------------------------------------------------------
+        $(function () {
+            console.log("=== LIQUID BUTTON (ESPACIO AMPLIADO) ===");
+            var button = $('.btn-liquid');
+            if (!button.length) {
+                console.error("Button not found");
+                return;
+            }
+
+            // Parámetros suaves
+            var viscosity = 30;
+            var mouseDist = 60;
+            var damping = 0.08;
+            var pointsCount = 8;
+            var strength = 1.8;
+
+            var pointsA = [], pointsB = [];
+            var $canvas = null, ctx = null;
+
+            // Variables del ratón
+            var mouseX = 0, mouseY = 0;
+            var relMouseX = 0, relMouseY = 0;
+            var mouseSpeedX = 0, mouseSpeedY = 0;
+            var mouseDirectionX = 0, mouseDirectionY = 0;
+            var lastMouseX = 0, lastMouseY = 0;
+            var lastTimestamp = 0;
+
+            $(document).on('mousemove', function (e) {
+                var now = performance.now();
+                var dx = e.pageX - lastMouseX;
+                var dy = e.pageY - lastMouseY;
+                var dt = Math.max(1, now - lastTimestamp);
+                mouseSpeedX = dx / dt * 16;
+                mouseSpeedY = dy / dt * 16;
+                mouseDirectionX = dx > 0 ? 1 : (dx < 0 ? -1 : 0);
+                mouseDirectionY = dy > 0 ? 1 : (dy < 0 ? -1 : 0);
+                lastMouseX = e.pageX;
+                lastMouseY = e.pageY;
+                lastTimestamp = now;
+
+                mouseX = e.pageX;
+                mouseY = e.pageY;
+
+                if ($canvas && $canvas[0]) {
+                    var offset = $canvas.offset();
+                    if (offset) {
+                        relMouseX = mouseX - offset.left;
+                        relMouseY = mouseY - offset.top;
+                    }
+                }
+            });
+
+            function Point(x, y, level) {
+                this.ix = 80 + x;   // aumento el offset base (antes 50) para más margen
+                this.iy = 80 + y;
+                this.x = this.ix;
+                this.y = this.iy;
+                this.vx = 0;
+                this.vy = 0;
+                this.level = level;
+            }
+
+            Point.prototype.move = function () {
+                this.vx += (this.ix - this.x) / (viscosity * this.level);
+                this.vy += (this.iy - this.y) / (viscosity * this.level);
+
+                var dx = this.ix - relMouseX;
+                var dy = this.iy - relMouseY;
+                var dist = Math.hypot(dx, dy);
+                var influence = 1 - Math.min(1, dist / mouseDist);
+                if (influence > 0) {
+                    var pushX = mouseSpeedX * strength * influence;
+                    var pushY = mouseSpeedY * strength * influence;
+                    if ((mouseDirectionX > 0 && this.x < relMouseX) || (mouseDirectionX < 0 && this.x > relMouseX)) {
+                        this.vx += pushX;
+                    }
+                    if ((mouseDirectionY > 0 && this.y < relMouseY) || (mouseDirectionY < 0 && this.y > relMouseY)) {
+                        this.vy += pushY;
+                    }
+                }
+
+                this.vx *= (1 - damping);
+                this.vy *= (1 - damping);
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Límite ampliado para permitir más deformación sin salirse del canvas
+                var maxOffset = 55;  // aumento el desplazamiento máximo permitido
+                this.x = Math.min(Math.max(this.x, this.ix - maxOffset), this.ix + maxOffset);
+                this.y = Math.min(Math.max(this.y, this.iy - maxOffset), this.iy + maxOffset);
+            };
+
+            function addPoints(x, y) {
+                pointsA.push(new Point(x, y, 1));
+                pointsB.push(new Point(x, y, 2));
+            }
+
+            function initButton() {
+                var btnW = button.width();
+                var btnH = button.height();
+                console.log(`Button: ${btnW}x${btnH}`);
+
+                $canvas = $('<canvas></canvas>');
+                button.append($canvas);
+                var canvasElem = $canvas[0];
+                ctx = canvasElem.getContext('2d');
+                // Canvas más grande para dar espacio a la deformación
+                canvasElem.width = btnW + 160;   // antes +100, ahora +160
+                canvasElem.height = btnH + 160;
+
+                var x = btnH / 2;
+                // Superior
+                for (var j = 1; j < pointsCount; j++) {
+                    addPoints(x + ((btnW - btnH) / pointsCount) * j, 0);
+                }
+                addPoints(btnW - btnH / 5, 0);
+                addPoints(btnW + btnH / 10, btnH / 2);
+                addPoints(btnW - btnH / 5, btnH);
+                // Inferior
+                for (var j = pointsCount - 1; j > 0; j--) {
+                    addPoints(x + ((btnW - btnH) / pointsCount) * j, btnH);
+                }
+                addPoints(btnH / 5, btnH);
+                addPoints(-btnH / 10, btnH / 2);
+                addPoints(btnH / 5, 0);
+
+                console.log(`Puntos generados: ${pointsA.length}`);
+                renderLoop();
+            }
+
+            // Curva Catmull‑Rom
+            function catmullRomPoint(p0, p1, p2, p3, t) {
+                var t2 = t * t;
+                var t3 = t2 * t;
+                var x = 0.5 * ((2 * p1.x) +
+                    (-p0.x + p2.x) * t +
+                    (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 +
+                    (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3);
+                var y = 0.5 * ((2 * p1.y) +
+                    (-p0.y + p2.y) * t +
+                    (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 +
+                    (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3);
+                return { x: x, y: y };
+            }
+
+            function drawShape(points, fillStyle) {
+                if (points.length < 3) return;
+                var n = points.length;
+                ctx.beginPath();
+                for (var i = 0; i < n; i++) {
+                    var p0 = points[(i - 1 + n) % n];
+                    var p1 = points[i];
+                    var p2 = points[(i + 1) % n];
+                    var p3 = points[(i + 2) % n];
+                    var steps = 12;
+                    for (var s = 0; s <= steps; s++) {
+                        var t = s / steps;
+                        var pt = catmullRomPoint(p0, p1, p2, p3, t);
+                        if (s === 0 && i === 0) ctx.moveTo(pt.x, pt.y);
+                        else ctx.lineTo(pt.x, pt.y);
+                    }
+                }
+                ctx.closePath();
+                ctx.fillStyle = fillStyle;
+                ctx.fill();
+            }
+
+            function renderLoop() {
+                if (!ctx) return;
+                requestAnimationFrame(renderLoop);
+
+                ctx.clearRect(0, 0, $canvas.width(), $canvas.height());
+
+                for (var i = 0; i < pointsA.length; i++) {
+                    pointsA[i].move();
+                    pointsB[i].move();
+                }
+
+                var gradX = Math.min(Math.max(relMouseX, 0), $canvas.width());
+                var gradY = Math.min(Math.max(relMouseY, 0), $canvas.height());
+                var cx = $canvas.width() / 2, cy = $canvas.height() / 2;
+                var dist = Math.hypot(gradX - cx, gradY - cy) / Math.hypot(cx, cy);
+                var gradient = ctx.createRadialGradient(gradX, gradY, 300 + (300 * dist), gradX, gradY, 0);
+                gradient.addColorStop(0, '#102ce5');
+                gradient.addColorStop(1, '#E406D6');
+
+                drawShape(pointsA, '#1CE2D8');
+                drawShape(pointsB, gradient);
+            }
+
+            initButton();
+
+            $(window).on('resize', function () {
+                if ($canvas) $canvas.remove();
+                pointsA.length = 0;
+                pointsB.length = 0;
+                initButton();
+            });
+        });
+
+        // ------------------------------------------------------------
+        // URLs aleatorias (fallback)
+        // ------------------------------------------------------------
+        var urls = [
+            { url: "https://www.youtube.com/watch?time_continue=381&v=TXTyMxM5vuY", title: "Item 1" },
+            { url: "https://www.youtube.com/watch?v=o791hgNvGIg", title: "Item 2" }
+        ];
+
+        function setRandomLink() {
+            if (!urls.length) return;
+            var randomIndex = Math.floor(Math.random() * urls.length);
+            var chosen = urls[randomIndex];
+            $('#randomLinkBtn').attr('href', chosen.url);
+            $('#btnText').text(chosen.title || "Let's GO!");
+        }
+
+        fetch('urls.json')
+            .then(response => response.json())
+            .then(data => {
+                if (Array.isArray(data) && data.length) urls = data;
+                setRandomLink();
+            })
+            .catch(err => {
+                console.warn('urls.json not loaded, using defaults', err);
+                setRandomLink();
+            });
+
+        $('#randomLinkBtn').on('click', function (e) {
+            setRandomLink();
+        });
+
+        setRandomLink();
+    </script>
+</body>
+
+</html>
