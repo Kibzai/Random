@@ -4,9 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Take me to a random Site - Kibzaim Mejia</title>
+    <title>Random - Kibzai</title>
     <style>
         @import url("https://fonts.googleapis.com/css?family=Montserrat:200,300,400,600");
+
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             margin: 0;
@@ -26,6 +30,13 @@
             font-family: "Montserrat";
             text-align: center;
             width: 100%;
+            background: radial-gradient(circle, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 33%);
+            padding: 20vh;
+            pointer-events: none;
+        }
+
+        .title>* {
+            pointer-events: auto;
         }
 
         .title h3 a {
@@ -40,16 +51,27 @@
             font-size: 60px;
             padding: 0;
             margin: 0;
-            line-height: 1;
+            text-shadow: 0 0 30px #000155;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .title h2 {
+            position: relative;
+            color: #EEEEEE;
+            font-weight: 300;
+            font-size: 50px;
+            padding: 0;
+            margin: 0;
             text-shadow: 0 0 30px #000155;
         }
 
         .title h3 {
             font-weight: 200;
-            font-size: 20px;
+            font-size: 1.7rem;
             padding: 0;
             margin: 0;
-            line-height: 1;
             color: #EEEEEE;
             letter-spacing: 2px;
             text-shadow: 0 0 30px #000155;
@@ -69,6 +91,7 @@
             cursor: pointer;
             transition: transform 0.2s ease;
             box-shadow: 0 0 15px rgba(67, 203, 255, 0.3);
+            pointer-events: auto;
         }
 
         .btn-liquid:hover {
@@ -87,13 +110,9 @@
         .btn-liquid canvas {
             position: absolute;
             top: -80px;
-            /* más espacio arriba */
             right: -80px;
-            /* más espacio derecha */
             bottom: -80px;
-            /* más espacio abajo */
             left: -80px;
-            /* más espacio izquierda */
             z-index: 1;
             pointer-events: none;
         }
@@ -102,140 +121,116 @@
 
 <body>
     <div class="title">
-        <h3><a href="../" style="color:white">Regresar</a></h3><br>
-        <h3>Llévame a un lugar</h3>
-        <h1>Random</h1>
+        <h3><a href="tools/">Herramientas</a></h3>
+        <h2>Llévame a un lugar</h2>
+        <h1 id="linkTitle">Random</h1>
         <br>
         <a href="#" id="randomLinkBtn" class="btn-liquid" target="_blank">
-            <span class="inner" id="btnText">Let's GO!</span>
-        </a><br>
+            <span class="inner">RANDOM</span>
+        </a>
     </div>
 
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script>
-        // ------------------------------------------------------------
-        // PARTÍCULAS (original, funciona)
-        // ------------------------------------------------------------
         (function () {
-            var _createClass = function () {
-                function defineProperties(target, props) {
-                    for (var i = 0; i < props.length; i++) {
-                        var descriptor = props[i];
-                        descriptor.enumerable = descriptor.enumerable || false;
-                        descriptor.configurable = true;
-                        if ("value" in descriptor) descriptor.writable = true;
-                        Object.defineProperty(target, descriptor.key, descriptor);
-                    }
-                }
-                return function (Constructor, protoProps, staticProps) {
-                    if (protoProps) defineProperties(Constructor.prototype, protoProps);
-                    if (staticProps) defineProperties(Constructor, staticProps);
-                    return Constructor;
-                };
-            }();
-
-            function _classCallCheck(instance, Constructor) {
-                if (!(instance instanceof Constructor)) {
-                    throw new TypeError("Cannot call a class as a function");
-                }
-            }
-
-            var max_particles = 1000;
+            // ------------------------------------------------------------
+            // PARTÍCULAS DE FONDO
+            // ------------------------------------------------------------
+            var max_particles = Math.min(1000, Math.floor(window.innerWidth * window.innerHeight / 800));
             var tela = document.createElement('canvas');
             tela.width = $(window).width();
             tela.height = $(window).height();
             $("body").append(tela);
-            var canvas = tela.getContext('2d');
+            var canvasCtx = tela.getContext('2d');
 
             var Particle = function () {
-                function Particle(canvas, progress) {
-                    _classCallCheck(this, Particle);
-                    var random = Math.random();
-                    this.progress = 0;
-                    this.canvas = canvas;
-                    this.x = $(window).width() / 2 + (Math.random() * 200 - Math.random() * 200);
-                    this.y = $(window).height() / 2 + (Math.random() * 200 - Math.random() * 200);
-                    this.w = $(window).width();
-                    this.h = $(window).height();
-                    this.radius = random > .1 ? Math.random() * 0.8 : Math.random() * 1.8;
-                    this.radius = random > .9 ? Math.random() * 2 : this.radius;
-                    this.color = random > .1 ? "#43CBFF" : "#E406D6";
-                    this.color = random > .9 ? "#FFFFFF" : this.color;
-                    this.variantx1 = Math.random() * 100;
-                    this.variantx2 = Math.random() * 100;
-                    this.varianty1 = Math.random() * 100;
-                    this.varianty2 = Math.random() * 100;
+                var random = Math.random();
+                this.progress = 0;
+                this.x = $(window).width() / 2 + (Math.random() * 200 - Math.random() * 200);
+                this.y = $(window).height() / 2 + (Math.random() * 200 - Math.random() * 200);
+                this.w = $(window).width();
+                this.h = $(window).height();
+                this.radius = random > 0.1 ? Math.random() * 0.8 : Math.random() * 1.8;
+                if (random > 0.9) this.radius = Math.random() * 2;
+                this.color = random > 0.1 ? "#43CBFF" : "#E406D6";
+                if (random > 0.9) this.color = "#FFFFFF";
+                this.variantx1 = Math.random() * 100;
+                this.variantx2 = Math.random() * 100;
+                this.varianty1 = Math.random() * 100;
+                this.varianty2 = Math.random() * 100;
+            };
+
+            Particle.prototype.render = function () {
+                canvasCtx.beginPath();
+                canvasCtx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+                canvasCtx.fillStyle = this.color;
+                canvasCtx.fill();
+            };
+
+            Particle.prototype.move = function () {
+                this.x += Math.sin(this.progress / this.variantx1) * Math.cos(this.progress / this.variantx2);
+                this.y += Math.sin(this.progress / this.varianty1) * Math.cos(this.progress / this.varianty2);
+                if (this.x < 0 || this.x > this.w - this.radius || this.y < 0 || this.y > this.h - this.radius) {
+                    return false;
                 }
-                _createClass(Particle, [{
-                    key: 'render',
-                    value: function render() {
-                        this.canvas.beginPath();
-                        this.canvas.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
-                        this.canvas.fillStyle = this.color;
-                        this.canvas.fill();
-                    }
-                }, {
-                    key: 'move',
-                    value: function move() {
-                        this.x += Math.sin(this.progress / this.variantx1) * Math.cos(this.progress / this.variantx2);
-                        this.y += Math.sin(this.progress / this.varianty1) * Math.cos(this.progress / this.varianty2);
-                        if (this.x < 0 || this.x > this.w - this.radius) return false;
-                        if (this.y < 0 || this.y > this.h - this.radius) return false;
-                        this.render();
-                        this.progress++;
-                        return true;
-                    }
-                }]);
-                return Particle;
-            }();
+                this.render();
+                this.progress++;
+                return true;
+            };
 
             var particles = [];
-            var init_num = (function populate(num) {
+
+            function populate(num) {
                 for (var i = 0; i < num; i++) {
                     setTimeout(function () {
-                        particles.push(new Particle(canvas, i));
+                        particles.push(new Particle());
                     }, i * 20);
                 }
                 return particles.length;
-            })(max_particles);
-
-            function clear() {
-                canvas.globalAlpha = 0.02;
-                canvas.fillStyle = '#000155';
-                canvas.fillRect(0, 0, tela.width, tela.height);
-                canvas.globalAlpha = 1;
             }
 
-            function update() {
+            var init_num = populate(max_particles);
+
+            function clearParticles() {
+                canvasCtx.globalAlpha = 0.02;
+                canvasCtx.fillStyle = '#000155';
+                canvasCtx.fillRect(0, 0, tela.width, tela.height);
+                canvasCtx.globalAlpha = 1;
+            }
+
+            function updateParticles() {
                 particles = particles.filter(function (p) { return p.move(); });
                 if (particles.length < init_num) populate(1);
-                clear();
-                requestAnimationFrame(update);
+                clearParticles();
+                requestAnimationFrame(updateParticles);
             }
-            update();
+            updateParticles();
 
             $(window).on('resize', function () {
                 tela.width = $(window).width();
                 tela.height = $(window).height();
+                var newW = tela.width;
+                var newH = tela.height;
                 particles.forEach(function (p) {
-                    p.w = tela.width;
-                    p.h = tela.height;
+                    p.w = newW;
+                    p.h = newH;
+                    p.x = newW / 2 + (Math.random() * 200 - Math.random() * 200);
+                    p.y = newH / 2 + (Math.random() * 200 - Math.random() * 200);
                 });
+                max_particles = Math.min(1000, Math.floor(newW * newH / 800));
+                if (particles.length < max_particles) {
+                    populate(max_particles - particles.length);
+                }
             });
         })();
 
         // ------------------------------------------------------------
-        // BOTÓN LÍQUIDO CON ESPACIO AMPLIADO (sin clipping)
+        // BOTÓN LÍQUIDO (con resize optimizado)
         // ------------------------------------------------------------
         $(function () {
-            console.log("=== LIQUID BUTTON (ESPACIO AMPLIADO) ===");
             var button = $('.btn-liquid');
-            if (!button.length) {
-                console.error("Button not found");
-                return;
-            }
+            if (!button.length) return;
 
-            // Parámetros suaves
             var viscosity = 30;
             var mouseDist = 60;
             var damping = 0.08;
@@ -244,30 +239,40 @@
 
             var pointsA = [], pointsB = [];
             var $canvas = null, ctx = null;
-
-            // Variables del ratón
+            var rafId = null;
             var mouseX = 0, mouseY = 0;
             var relMouseX = 0, relMouseY = 0;
             var mouseSpeedX = 0, mouseSpeedY = 0;
             var mouseDirectionX = 0, mouseDirectionY = 0;
             var lastMouseX = 0, lastMouseY = 0;
             var lastTimestamp = 0;
+            var hasMouseMoved = false;
 
-            $(document).on('mousemove', function (e) {
+            function updateMouse(e) {
                 var now = performance.now();
-                var dx = e.pageX - lastMouseX;
-                var dy = e.pageY - lastMouseY;
+                var clientX, clientY;
+                if (e.touches) {
+                    clientX = e.touches[0].clientX;
+                    clientY = e.touches[0].clientY;
+                } else {
+                    clientX = e.clientX;
+                    clientY = e.clientY;
+                }
+
+                var dx = clientX - lastMouseX;
+                var dy = clientY - lastMouseY;
                 var dt = Math.max(1, now - lastTimestamp);
                 mouseSpeedX = dx / dt * 16;
                 mouseSpeedY = dy / dt * 16;
                 mouseDirectionX = dx > 0 ? 1 : (dx < 0 ? -1 : 0);
                 mouseDirectionY = dy > 0 ? 1 : (dy < 0 ? -1 : 0);
-                lastMouseX = e.pageX;
-                lastMouseY = e.pageY;
+                lastMouseX = clientX;
+                lastMouseY = clientY;
                 lastTimestamp = now;
 
-                mouseX = e.pageX;
-                mouseY = e.pageY;
+                mouseX = clientX;
+                mouseY = clientY;
+                hasMouseMoved = true;
 
                 if ($canvas && $canvas[0]) {
                     var offset = $canvas.offset();
@@ -276,10 +281,18 @@
                         relMouseY = mouseY - offset.top;
                     }
                 }
+            }
+
+            $(document).on('mousemove touchmove', function (e) {
+                updateMouse(e);
+            });
+
+            $(document).on('touchstart', function (e) {
+                updateMouse(e);
             });
 
             function Point(x, y, level) {
-                this.ix = 80 + x;   // aumento el offset base (antes 50) para más margen
+                this.ix = 80 + x;
                 this.iy = 80 + y;
                 this.x = this.ix;
                 this.y = this.iy;
@@ -296,7 +309,7 @@
                 var dy = this.iy - relMouseY;
                 var dist = Math.hypot(dx, dy);
                 var influence = 1 - Math.min(1, dist / mouseDist);
-                if (influence > 0) {
+                if (influence > 0 && hasMouseMoved) {
                     var pushX = mouseSpeedX * strength * influence;
                     var pushY = mouseSpeedY * strength * influence;
                     if ((mouseDirectionX > 0 && this.x < relMouseX) || (mouseDirectionX < 0 && this.x > relMouseX)) {
@@ -312,8 +325,7 @@
                 this.x += this.vx;
                 this.y += this.vy;
 
-                // Límite ampliado para permitir más deformación sin salirse del canvas
-                var maxOffset = 55;  // aumento el desplazamiento máximo permitido
+                var maxOffset = 55;
                 this.x = Math.min(Math.max(this.x, this.ix - maxOffset), this.ix + maxOffset);
                 this.y = Math.min(Math.max(this.y, this.iy - maxOffset), this.iy + maxOffset);
             };
@@ -323,40 +335,6 @@
                 pointsB.push(new Point(x, y, 2));
             }
 
-            function initButton() {
-                var btnW = button.width();
-                var btnH = button.height();
-                console.log(`Button: ${btnW}x${btnH}`);
-
-                $canvas = $('<canvas></canvas>');
-                button.append($canvas);
-                var canvasElem = $canvas[0];
-                ctx = canvasElem.getContext('2d');
-                // Canvas más grande para dar espacio a la deformación
-                canvasElem.width = btnW + 160;   // antes +100, ahora +160
-                canvasElem.height = btnH + 160;
-
-                var x = btnH / 2;
-                // Superior
-                for (var j = 1; j < pointsCount; j++) {
-                    addPoints(x + ((btnW - btnH) / pointsCount) * j, 0);
-                }
-                addPoints(btnW - btnH / 5, 0);
-                addPoints(btnW + btnH / 10, btnH / 2);
-                addPoints(btnW - btnH / 5, btnH);
-                // Inferior
-                for (var j = pointsCount - 1; j > 0; j--) {
-                    addPoints(x + ((btnW - btnH) / pointsCount) * j, btnH);
-                }
-                addPoints(btnH / 5, btnH);
-                addPoints(-btnH / 10, btnH / 2);
-                addPoints(btnH / 5, 0);
-
-                console.log(`Puntos generados: ${pointsA.length}`);
-                renderLoop();
-            }
-
-            // Curva Catmull‑Rom
             function catmullRomPoint(p0, p1, p2, p3, t) {
                 var t2 = t * t;
                 var t3 = t2 * t;
@@ -395,7 +373,7 @@
 
             function renderLoop() {
                 if (!ctx) return;
-                requestAnimationFrame(renderLoop);
+                rafId = requestAnimationFrame(renderLoop);
 
                 ctx.clearRect(0, 0, $canvas.width(), $canvas.height());
 
@@ -416,47 +394,133 @@
                 drawShape(pointsB, gradient);
             }
 
-            initButton();
-
-            $(window).on('resize', function () {
-                if ($canvas) $canvas.remove();
+            function initButton() {
+                if (rafId) {
+                    cancelAnimationFrame(rafId);
+                    rafId = null;
+                }
+                if ($canvas) {
+                    $canvas.remove();
+                    $canvas = null;
+                    ctx = null;
+                }
                 pointsA.length = 0;
                 pointsB.length = 0;
-                initButton();
+
+                var btnW = button.width();
+                var btnH = button.height();
+
+                $canvas = $('<canvas></canvas>');
+                button.append($canvas);
+                var canvasElem = $canvas[0];
+                ctx = canvasElem.getContext('2d');
+                canvasElem.width = btnW + 160;
+                canvasElem.height = btnH + 160;
+
+                var x = btnH / 2;
+                for (var j = 1; j < pointsCount; j++) {
+                    addPoints(x + ((btnW - btnH) / pointsCount) * j, 0);
+                }
+                addPoints(btnW - btnH / 5, 0);
+                addPoints(btnW + btnH / 10, btnH / 2);
+                addPoints(btnW - btnH / 5, btnH);
+                for (var k = pointsCount - 1; k > 0; k--) {
+                    addPoints(x + ((btnW - btnH) / pointsCount) * k, btnH);
+                }
+                addPoints(btnH / 5, btnH);
+                addPoints(-btnH / 10, btnH / 2);
+                addPoints(btnH / 5, 0);
+
+                if (hasMouseMoved && $canvas && $canvas[0]) {
+                    var offset = $canvas.offset();
+                    if (offset) {
+                        relMouseX = mouseX - offset.left;
+                        relMouseY = mouseY - offset.top;
+                    }
+                }
+
+                renderLoop();
+            }
+
+            initButton();
+
+            var resizeTimeout;
+            $(window).on('resize', function () {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(function () {
+                    initButton();
+                }, 150);
             });
         });
 
         // ------------------------------------------------------------
-        // URLs aleatorias (fallback)
+        // GESTIÓN DE URLs ALEATORIAS (sin repetición consecutiva)
         // ------------------------------------------------------------
         var urls = [
-            { url: "https://www.youtube.com/watch?time_continue=381&v=TXTyMxM5vuY", title: "Item 1" },
-            { url: "https://www.youtube.com/watch?v=o791hgNvGIg", title: "Item 2" }
+            { url: "https://kibzai.github.io/Programs/MAFIA", title: "Random" }
         ];
+        var lastIndex = -1;
+        var currentIndex = -1;
 
         function setRandomLink() {
             if (!urls.length) return;
-            var randomIndex = Math.floor(Math.random() * urls.length);
+            var randomIndex;
+            if (urls.length === 1) {
+                randomIndex = 0;
+            } else if (urls.length === 2) {
+                randomIndex = (currentIndex === 0) ? 1 : 0;
+            } else {
+                do {
+                    randomIndex = Math.floor(Math.random() * urls.length);
+                } while (randomIndex === lastIndex && urls.length > 1);
+            }
+            lastIndex = currentIndex; // el índice que se acaba de abrir pasa a ser el último
+            currentIndex = randomIndex;
             var chosen = urls[randomIndex];
             $('#randomLinkBtn').attr('href', chosen.url);
-            $('#btnText').text(chosen.title || "Let's GO!");
+            $('#linkTitle').text(chosen.title || "Random");
         }
 
+        // Cargar urls.json (estructura { "urls": [...] })
         fetch('urls.json')
-            .then(response => response.json())
-            .then(data => {
-                if (Array.isArray(data) && data.length) urls = data;
+            .then(function (response) {
+                if (!response.ok) throw new Error('No se pudo cargar urls.json');
+                return response.json();
+            })
+            .then(function (data) {
+                if (Array.isArray(data.urls) && data.urls.length) {
+                    urls = data.urls;
+                }
                 setRandomLink();
             })
-            .catch(err => {
-                console.warn('urls.json not loaded, using defaults', err);
+            .catch(function () {
+                console.warn('Usando enlaces de respaldo (urls.json no disponible)');
                 setRandomLink();
             });
 
+        // Al hacer clic NO se regenera el enlace, solo se permite la navegación.
+        // Después de abrir el enlace, cuando la página recupere visibilidad, se prepara el siguiente destino.
         $('#randomLinkBtn').on('click', function (e) {
-            setRandomLink();
+            // No prevenimos el comportamiento por defecto, dejamos que abra el href actual.
+            // Programamos la regeneración del siguiente enlace para cuando el usuario regrese.
+            setTimeout(function () {
+                // Si la página permanece visible (pestaña actual), regeneramos tras 500ms.
+                if (!document.hidden) {
+                    setRandomLink();
+                }
+            }, 500);
         });
 
+        // Si el usuario abre el enlace en una nueva pestaña, la pestaña actual se mantiene visible,
+        // pero también podemos usar el evento visibilitychange para regenerar al volver.
+        document.addEventListener('visibilitychange', function () {
+            if (!document.hidden) {
+                // El usuario ha regresado a esta pestaña, preparamos nuevo enlace.
+                setRandomLink();
+            }
+        });
+
+        // Establecer enlace inicial
         setRandomLink();
     </script>
 </body>
