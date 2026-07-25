@@ -1,6 +1,10 @@
 {
   "urls": [
     {
+      "url": "https://musical.toys/toys/binary-piano/?keys=C1,D2,F3,E4,A4,B4,G5,D6,A6,C7",
+      "title": "Binary Piano"
+    },
+    {
       "url": "https://lessgames.com/",
       "title": "Less Games"
     },
