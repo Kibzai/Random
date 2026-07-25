@@ -19,6 +19,7 @@
             width: 100%;
             height: 100%;
             background: #000000;
+            font-family: "Montserrat", sans-serif;
         }
 
         .title {
@@ -26,12 +27,11 @@
             position: absolute;
             left: 50%;
             top: 50%;
-            transform: translateX(-50%) translateY(-50%);
-            font-family: "Montserrat";
+            transform: translate(-50%, -50%);
             text-align: center;
             width: 100%;
-            background: radial-gradient(circle, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 33%);
-            padding: 20vh;
+            padding: 2rem;
+            background: radial-gradient(circle, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 25%);
             pointer-events: none;
         }
 
@@ -39,52 +39,34 @@
             pointer-events: auto;
         }
 
-        .title h3 a {
-            color: white;
-            text-decoration: none;
+        .title h2 {
+            font-weight: 300;
+            font-size: clamp(2rem, 8vw, 3.5rem);
+            margin: 0 0 0.5rem;
+            color: #EEEEEE;
+            text-shadow: 0 0 30px #000155;
         }
 
         .title h1 {
-            position: relative;
-            color: #EEEEEE;
             font-weight: 600;
-            font-size: 60px;
-            padding: 0;
-            margin: 0;
+            font-size: clamp(2.5rem, 10vw, 4.5rem);
+            margin: 0 0 2rem;
+            color: #EEEEEE;
             text-shadow: 0 0 30px #000155;
             word-wrap: break-word;
             overflow-wrap: break-word;
             max-width: 100%;
-        }
-
-        .title h2 {
-            position: relative;
-            color: #EEEEEE;
-            font-weight: 300;
-            font-size: 50px;
-            padding: 0;
-            margin: 0;
-            text-shadow: 0 0 30px #000155;
-        }
-
-        .title h3 {
-            font-weight: 200;
-            font-size: 1.7rem;
-            padding: 0;
-            margin: 0;
-            color: #EEEEEE;
-            letter-spacing: 2px;
-            text-shadow: 0 0 30px #000155;
+            padding: 0 1rem;
         }
 
         .btn-liquid {
             display: inline-block;
             position: relative;
-            width: 240px;
-            height: 60px;
+            width: clamp(180px, 60vw, 280px);
+            height: clamp(50px, 10vw, 65px);
             border-radius: 27px;
             color: #fff;
-            font: 700 14px/60px "Montserrat", sans-serif;
+            font: 700 clamp(0.9rem, 3vw, 1rem) / clamp(50px, 10vw, 65px) "Montserrat", sans-serif;
             text-align: center;
             text-decoration: none;
             text-transform: uppercase;
@@ -92,6 +74,7 @@
             transition: transform 0.2s ease;
             box-shadow: 0 0 15px rgba(67, 203, 255, 0.3);
             pointer-events: auto;
+            letter-spacing: 2px;
         }
 
         .btn-liquid:hover {
@@ -116,16 +99,35 @@
             z-index: 1;
             pointer-events: none;
         }
+
+        /* Ajustes adicionales para móviles muy pequeños */
+        @media (max-width: 480px) {
+            .title {
+                padding: 1rem;
+                background: radial-gradient(circle, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 50%);
+            }
+            .title h2 {
+                margin-bottom: 0.2rem;
+            }
+            .title h1 {
+                margin-bottom: 1.5rem;
+            }
+            .btn-liquid canvas {
+                top: -60px;
+                right: -60px;
+                bottom: -60px;
+                left: -60px;
+            }
+        }
     </style>
 </head>
 
 <body>
     <div class="title">
-        <h3><a href="tools/">Herramientas</a></h3>
+      <h1>💫</h1>
         <h2>WWW</h2>
-        <h1 id="linkTitle">Random</h1>
-        <br>
-        <a href="#" id="randomLinkBtn" class="btn-liquid" target="_blank">
+        <h1 id="linkTitle">Llévame a un lugar </h1>
+        <a href="#" id="randomLinkBtn" class="btn-liquid" target="_blank" rel="noopener">
             <span class="inner">RANDOM</span>
         </a>
     </div>
@@ -134,7 +136,7 @@
     <script>
         (function () {
             // ------------------------------------------------------------
-            // PARTÍCULAS DE FONDO
+            // PARTÍCULAS DE FONDO (adaptativo)
             // ------------------------------------------------------------
             var max_particles = Math.min(1000, Math.floor(window.innerWidth * window.innerHeight / 800));
             var tela = document.createElement('canvas');
@@ -225,7 +227,7 @@
         })();
 
         // ------------------------------------------------------------
-        // BOTÓN LÍQUIDO (con resize optimizado)
+        // BOTÓN LÍQUIDO (responsive con resize)
         // ------------------------------------------------------------
         $(function () {
             var button = $('.btn-liquid');
@@ -251,12 +253,14 @@
             function updateMouse(e) {
                 var now = performance.now();
                 var clientX, clientY;
-                if (e.touches) {
+                if (e.touches && e.touches.length) {
                     clientX = e.touches[0].clientX;
                     clientY = e.touches[0].clientY;
-                } else {
+                } else if (e.clientX) {
                     clientX = e.clientX;
                     clientY = e.clientY;
+                } else {
+                    return;
                 }
 
                 var dx = clientX - lastMouseX;
@@ -274,7 +278,7 @@
                 mouseY = clientY;
                 hasMouseMoved = true;
 
-                if ($canvas && $canvas[0]) {
+                if ($canvas && $canvas.length) {
                     var offset = $canvas.offset();
                     if (offset) {
                         relMouseX = mouseX - offset.left;
@@ -410,6 +414,8 @@
                 var btnW = button.width();
                 var btnH = button.height();
 
+                if (btnW === 0 || btnH === 0) return;
+
                 $canvas = $('<canvas></canvas>');
                 button.append($canvas);
                 var canvasElem = $canvas[0];
@@ -431,7 +437,7 @@
                 addPoints(-btnH / 10, btnH / 2);
                 addPoints(btnH / 5, 0);
 
-                if (hasMouseMoved && $canvas && $canvas[0]) {
+                if (hasMouseMoved && $canvas && $canvas.length) {
                     var offset = $canvas.offset();
                     if (offset) {
                         relMouseX = mouseX - offset.left;
@@ -451,13 +457,18 @@
                     initButton();
                 }, 150);
             });
+
+            // En móviles, a veces el resize no se dispara al girar; aseguramos con orientationchange
+            $(window).on('orientationchange', function () {
+                setTimeout(initButton, 200);
+            });
         });
 
         // ------------------------------------------------------------
         // GESTIÓN DE URLs ALEATORIAS (sin repetición consecutiva)
         // ------------------------------------------------------------
         var urls = [
-            { url: "https://kibzai.github.io/Programs/MAFIA", title: "Random" }
+            { url: "https://kibzai.github.io/Programs/MAFIA", title: "Llévame a un lugar" }
         ];
         var lastIndex = -1;
         var currentIndex = -1;
@@ -474,7 +485,7 @@
                     randomIndex = Math.floor(Math.random() * urls.length);
                 } while (randomIndex === lastIndex && urls.length > 1);
             }
-            lastIndex = currentIndex; // el índice que se acaba de abrir pasa a ser el último
+            lastIndex = currentIndex;
             currentIndex = randomIndex;
             var chosen = urls[randomIndex];
             $('#randomLinkBtn').attr('href', chosen.url);
@@ -498,29 +509,22 @@
                 setRandomLink();
             });
 
-        // Al hacer clic NO se regenera el enlace, solo se permite la navegación.
-        // Después de abrir el enlace, cuando la página recupere visibilidad, se prepara el siguiente destino.
-        $('#randomLinkBtn').on('click', function (e) {
-            // No prevenimos el comportamiento por defecto, dejamos que abra el href actual.
-            // Programamos la regeneración del siguiente enlace para cuando el usuario regrese.
+        // Regenerar enlace después de hacer clic, para que al volver ya esté otro
+        $('#randomLinkBtn').on('click', function () {
             setTimeout(function () {
-                // Si la página permanece visible (pestaña actual), regeneramos tras 500ms.
                 if (!document.hidden) {
                     setRandomLink();
                 }
             }, 500);
         });
 
-        // Si el usuario abre el enlace en una nueva pestaña, la pestaña actual se mantiene visible,
-        // pero también podemos usar el evento visibilitychange para regenerar al volver.
         document.addEventListener('visibilitychange', function () {
             if (!document.hidden) {
-                // El usuario ha regresado a esta pestaña, preparamos nuevo enlace.
                 setRandomLink();
             }
         });
 
-        // Establecer enlace inicial
+        // Enlace inicial
         setRandomLink();
     </script>
 </body>
